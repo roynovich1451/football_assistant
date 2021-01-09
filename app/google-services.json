@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "851886508827",
+    "project_id": "football-assistant-1bc4c",
+    "storage_bucket": "football-assistant-1bc4c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:851886508827:android:a553ccd582c7f663b0a1be",
+        "android_client_info": {
+          "package_name": "com.example.football_assistant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "851886508827-35bnerl4r7f9nb9otc5m0lvqrd3aeebb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhDzN8AXVS8KcH0EQyzBqaGU9uufQBzCw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "851886508827-35bnerl4r7f9nb9otc5m0lvqrd3aeebb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
