@@ -70,8 +70,8 @@ public class Game {
         this.date = date;
     }
 
-
-
-
-
+    public String toString() {
+        return String.format("Date: %s, Place: %s\n%s (%s) VS (%s) %s",
+                this.date, this.place, this.teamA, this.scoreA, this.scoreB, this.teamB);
+    }
 }

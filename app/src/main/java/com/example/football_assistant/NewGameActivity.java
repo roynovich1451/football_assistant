@@ -59,7 +59,7 @@ public class NewGameActivity extends AppCompatActivity {
         startActivity(intent);
     }
     public  void StoreToMD() {
-
+        //TODO: input check for dates, places and teams.
         Random rand = new Random(); //TODO: remove after create createGameID();
         if (!isAllDataFilled()){
             Toast.makeText(getApplicationContext(),"Please fill all data before ADD",Toast.LENGTH_SHORT).show();

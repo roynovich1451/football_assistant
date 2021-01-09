@@ -25,7 +25,7 @@ public class TeamStatsActivity extends AppCompatActivity {
     private FirebaseDatabase rootNode;
     private DatabaseReference gameReference;
     private DatabaseReference teamReference;
-    private Button btnBack, btnSearch;
+    private Button btnBack, btnSearch, btnGames;
     private EditText etTeam;
     private TextView tvPoints, tvWins, tvLosses, tvDraws, tvGF, tvGA; 
     @Override
@@ -41,7 +41,17 @@ public class TeamStatsActivity extends AppCompatActivity {
         etTeam = (EditText) findViewById(R.id.etTeamStat);
         btnBack = (Button) findViewById(R.id.btnBackFromTS);
         btnSearch = (Button) findViewById(R.id.btnSearch);
-
+        btnGames = (Button) findViewById(R.id.btnShowGames);
+        btnGames.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etTeam.getText().toString().matches("")) {
+                    Toast.makeText(getApplicationContext(), "Please enter wanted team", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                openShowGamesActivity(etTeam.getText().toString());
+            }
+        });
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,6 +69,12 @@ public class TeamStatsActivity extends AppCompatActivity {
                 returnMainActivity();
             }
         });
+    }
+
+    private void openShowGamesActivity(String tName) {
+        Intent intent = new Intent(this, ShowGamesActivity.class);
+        intent.putExtra("TEAM_NAME", tName);
+        startActivity(intent);
     }
 
     public void getTeamStats(){
