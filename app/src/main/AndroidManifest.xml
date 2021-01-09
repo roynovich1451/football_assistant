@@ -9,7 +9,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Football_assistant">
-        <activity android:name=".ShowStatsActivity"></activity>
         <activity android:name=".LeagueTableActivity" />
         <activity android:name=".TeamStatsActivity" />
         <activity android:name=".NewGameActivity" />

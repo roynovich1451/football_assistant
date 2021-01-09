@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -26,19 +27,26 @@ public class TeamStatsActivity extends AppCompatActivity {
     private DatabaseReference teamReference;
     private Button btnBack, btnSearch;
     private EditText etTeam;
+    private TextView tvPoints, tvWins, tvLosses, tvDraws, tvGF, tvGA; 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_stats);
-
+        tvPoints = (TextView) findViewById(R.id.tvDispPoints); 
+        tvWins = (TextView) findViewById(R.id.tvDispWins);
+        tvLosses = (TextView) findViewById(R.id.tvDispLooses);
+        tvDraws = (TextView) findViewById(R.id.tvDispDraws);
+        tvGF = (TextView) findViewById(R.id.tvDispGF);
+        tvGA = (TextView) findViewById(R.id.tvDispGA);
         etTeam = (EditText) findViewById(R.id.etTeamStat);
         btnBack = (Button) findViewById(R.id.btnBackFromTS);
         btnSearch = (Button) findViewById(R.id.btnSearch);
+
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (etTeam.getText().toString().matches("")) {
-                    Toast.makeText(getApplicationContext(), "Please wanted team", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Please enter wanted team", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 getTeamStats();
@@ -71,8 +79,9 @@ public class TeamStatsActivity extends AppCompatActivity {
                         String GF = dataSnapshot.child(name).child("gf").getValue(String.class);
                         String GA = dataSnapshot.child(name).child("ga").getValue(String.class);
                         String points = dataSnapshot.child(name).child("points").getValue(String.class);
+                        displayResult(wins, losses, draws, GF, GA, points);
                     } else {
-                        Toast.makeText(getApplicationContext(), "Team " + name + " could not be found in DB", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Team '" + name + "' could not be found in DB", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
@@ -85,6 +94,15 @@ public class TeamStatsActivity extends AppCompatActivity {
         catch (Exception e){
             Toast.makeText(getApplicationContext(),"Failure accured while try to save in DB:\n" + e.getMessage(),Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void displayResult(String wins, String losses, String draws, String gf, String ga, String points) {
+        tvWins.setText(wins);
+        tvLosses.setText(losses);
+        tvDraws.setText(draws);
+        tvGF.setText(gf);
+        tvGA.setText(ga);
+        tvPoints.setText(points);
     }
 
     public void returnMainActivity() {
