@@ -25,12 +25,29 @@ public class NewGameActivity extends AppCompatActivity {
     private FirebaseDatabase rootNode;
     private DatabaseReference gameReference;
     private DatabaseReference teamReference;
-    private int gamePlayed;
+    private int gameID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_game);
+
+        rootNode = FirebaseDatabase.getInstance("https://football-assistant-1bc4c-default-rtdb.firebaseio.com/");
+        gameReference = rootNode.getReference("Games");
+        teamReference = rootNode.getReference("Teams");
+        gameReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    gameID = (int) dataSnapshot.getChildrenCount();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         etTeamA = (EditText) findViewById(R.id.etTeamA);
         etTeamB = (EditText) findViewById(R.id.etTeamB);
@@ -44,7 +61,9 @@ public class NewGameActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StoreToMD();
+                if (ValidateUserInput()){
+                    StoreToMD();
+                }
             }
         });
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -54,17 +73,23 @@ public class NewGameActivity extends AppCompatActivity {
             }
         });
     }
+
+    private boolean ValidateUserInput() {
+        //TODO: input check for dates, places and teams.
+        if (!isAllDataFilled()){
+            Toast.makeText(getApplicationContext(),"Please fill all data before ADD",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
     public void returnMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+
     public  void StoreToMD() {
-        //TODO: input check for dates, places and teams.
-        Random rand = new Random(); //TODO: remove after create createGameID();
-        if (!isAllDataFilled()){
-            Toast.makeText(getApplicationContext(),"Please fill all data before ADD",Toast.LENGTH_SHORT).show();
-            return;
-        }
+
         String nameA = getText(etTeamA);
         String nameB = getText(etTeamB);
 
@@ -72,14 +97,9 @@ public class NewGameActivity extends AppCompatActivity {
         updateTeam(nameB, getText(etScoreB), getText(etScoreA));
 
         try{
-            rootNode = FirebaseDatabase.getInstance("https://football-assistant-1bc4c-default-rtdb.firebaseio.com/");
-            gameReference = rootNode.getReference("Games");
-            teamReference = rootNode.getReference("Teams");
-            gamePlayed = rand.nextInt(); //TODO: need to change this to check over DB number of games played; createGameID();
-            String gameID = String.valueOf(gamePlayed);
             Game game = new Game(getText(etTeamA), getText(etTeamB),
                     getText(etScoreA), getText(etScoreB), getText(etPlace), getText(etDate));
-            gameReference.child(gameID).setValue(game);
+            gameReference.child(String.valueOf(gameID)).setValue(game);
             Toast.makeText(getApplicationContext(),"Data saved",Toast.LENGTH_SHORT).show();
         }
         catch (Exception e){
@@ -89,8 +109,7 @@ public class NewGameActivity extends AppCompatActivity {
 
     private void updateTeam(String name, String GF, String GA) {
         try{
-            DatabaseReference reference = FirebaseDatabase.getInstance("https://football-assistant-1bc4c-default-rtdb.firebaseio.com/").getReference("Teams");
-            Query searchedTeam = reference.orderByChild("name").equalTo(name);
+            Query searchedTeam = teamReference.orderByChild("name").equalTo(name);
             searchedTeam.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -105,14 +124,14 @@ public class NewGameActivity extends AppCompatActivity {
 
                         Team updated = new Team(name, wins, draws, losses, cGF, cGA, points);
                         updated.updateAfterGame(GF, GA);
-                        reference.child(name).setValue(updated);
+                        teamReference.child(name).setValue(updated);
                         Toast.makeText(getApplicationContext(),"Team "+ name + " updated",Toast.LENGTH_SHORT).show();
                     }
                     else {
                         Team newTeam = new Team();
                         newTeam.setName(name);
                         newTeam.updateAfterGame(GF, GA);
-                        reference.child(name).setValue(newTeam);
+                        teamReference.child(name).setValue(newTeam);
                         Toast.makeText(getApplicationContext(),"Team "+ name + " created",Toast.LENGTH_SHORT).show();
                     }
 
