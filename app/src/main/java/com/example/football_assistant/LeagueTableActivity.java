@@ -4,9 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.AtomicFile;
 import android.util.Log;
 import android.view.Gravity;
+import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -20,6 +23,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 public class LeagueTableActivity extends AppCompatActivity {
 
@@ -33,22 +38,23 @@ public class LeagueTableActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_league_table);
+        tb = (TableLayout) findViewById(R.id.displayLinear);
 
-        teams = new ArrayList<Team>();
         getTeamsFromDB();
-        createTable();
     }
 
-    private void createTable() {
+    private void createTable(ArrayList<Team> teams) {
         TextView tvName, tvPoints, tvWins, tvDraws, tbLosses, tvGFGA, tvDiff, tvGames;
         String name, points, wins, draws, losses, gf, ga, gfga, diff, oag;
-
-        rowNum = 5; //teams.size();
-        tb = (TableLayout) findViewById(R.id.displayLinear);
+        rowNum = teams.size();
+        Collections.sort(teams);
+        TableRow row;
+        TableRow.LayoutParams lp;
         for (int i = 0; i < rowNum; i++) {
-            TableRow row = new TableRow(this);
-            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
+            row = new TableRow(this);
+            lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
             row.setLayoutParams(lp);
+
             name = teams.get(i).getName();
             points = teams.get(i).getPoints();
             wins = teams.get(i).getWins();
@@ -60,30 +66,14 @@ public class LeagueTableActivity extends AppCompatActivity {
             diff = String.valueOf(Integer.parseInt(gf) - Integer.parseInt(ga));
             oag = String.valueOf(Integer.parseInt(wins) + Integer.parseInt(draws) + Integer.parseInt(losses));
 
-            tvName = new TextView(this);
-            tvName.setText(name);
-            tvName.setGravity(Gravity.CENTER);
-            tvPoints = new TextView(this);
-            tvPoints.setText(points);
-            tvPoints.setGravity(Gravity.CENTER);
-            tvWins = new TextView(this);
-            tvWins.setText(wins);
-            tvWins.setGravity(Gravity.CENTER);
-            tvDraws = new TextView(this);
-            tvDraws.setText(draws);
-            tvDraws.setGravity(Gravity.CENTER);
-            tbLosses = new TextView(this);
-            tbLosses.setText(losses);
-            tbLosses.setGravity(Gravity.CENTER);
-            tvGFGA = new TextView(this);
-            tvGFGA.setText(gfga);
-            tvGFGA.setGravity(Gravity.CENTER);
-            tvDiff = new TextView(this);
-            tvDiff.setText(diff);
-            tvDiff.setGravity(Gravity.CENTER);
-            tvGames = new TextView(this);
-            tvGames.setText(oag);
-            tvGames.setGravity(Gravity.CENTER);
+            tvName = setView(name, i+1);
+            tvPoints = setView(points, i+1);
+            tvWins = setView(wins, i+1);
+            tvDraws = setView(draws, i+1);
+            tbLosses = setView(losses, i+1);
+            tvGFGA = setView(gfga, i+1);
+            tvDiff = setView(diff, i+1);
+            tvGames = setView(oag, i+1);
 
             row.addView(tvName);
             row.addView(tvGames);
@@ -95,15 +85,43 @@ public class LeagueTableActivity extends AppCompatActivity {
             row.addView(tvPoints);
             tb.addView(row, i);
         }
-
+        //create title row
+        row = new TableRow(this);
+        lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
+        row.setLayoutParams(lp);
+        row.addView(setView("Name",0));
+        row.addView(setView("Games",0));
+        row.addView(setView("Wins",0));
+        row.addView(setView("Draws",0));
+        row.addView(setView("Losses",0));
+        row.addView(setView("GF:GA",0));
+        row.addView(setView("Diff",0));
+        row.addView(setView("Points",0));
+        tb.addView(row, 0);
     }
 
+    private TextView setView(String text, int index){
+        TextView tv = new TextView(this);
+        tv.setText(text);
+        tv.setGravity(Gravity.CENTER);
+        tv.setWidth(this.getWindow().getDecorView().getWidth()/8);
+        String backColor;
+        if (index == 0) //Title
+            backColor = "#00897B";
+        else if (index%2 == 0) //even
+            backColor = "#9E9E9E";
+        else
+            backColor = "#E0E0E0";
+        tv.setBackgroundColor(Color.parseColor(backColor));
+        return tv;
+    }
     private void getTeamsFromDB() {
         //TODO: implement getTeamsFromDB();
+        ArrayList<Team> teams = new ArrayList<Team>();
         rootNode = FirebaseDatabase.getInstance("https://football-assistant-1bc4c-default-rtdb.firebaseio.com/");
         teamReference = rootNode.getReference("Teams");
-        Query searchedTeam = teamReference.orderByChild("points");
-        searchedTeam.addValueEventListener(new ValueEventListener() {
+//        Query searchedTeam = teamReference.orderByChild("points");
+        teamReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot team : dataSnapshot.getChildren()) {
@@ -116,8 +134,8 @@ public class LeagueTableActivity extends AppCompatActivity {
                     String ga = team.child("ga").getValue(String.class);
                     Team currTeam = new Team(name, wins, draws, losses, gf, ga, points);
                     teams.add(currTeam);
-                    Log.d("TeamAdd",currTeam.toString());
                 }
+                createTable(teams);
             }
 
             @Override

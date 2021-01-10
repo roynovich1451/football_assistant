@@ -9,7 +9,7 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnNG, btnTS, btnLT;
+    private Button btnNG, btnTS, btnLT, btnRem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         btnNG = (Button)findViewById(R.id.btnNewGame);
         btnTS = (Button)findViewById(R.id.btnTeamStats);
         btnLT = (Button)findViewById(R.id.btnLeagueTable);
+
         btnNG.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

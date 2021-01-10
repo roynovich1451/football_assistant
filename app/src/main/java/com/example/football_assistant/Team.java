@@ -1,6 +1,6 @@
 package com.example.football_assistant;
 
-public class Team {
+public class Team implements Comparable{
 
     private String name, wins, draws, losses, GF, GA, points;
 
@@ -122,5 +122,8 @@ public class Team {
         this.points = points;
     }
 
-
+    @Override
+    public int compareTo(Object o) {
+        return -1 * (Integer.parseInt(this.points) - Integer.parseInt(((Team)o).getPoints()));
+    }
 }

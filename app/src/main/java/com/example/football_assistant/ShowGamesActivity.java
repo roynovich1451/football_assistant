@@ -50,7 +50,6 @@ public class ShowGamesActivity extends AppCompatActivity {
 
 
     private void displayGamesList(String name) {
-        ArrayList<Game> games = new ArrayList<Game>();
         getGamesFromDB(name);
     }
 
