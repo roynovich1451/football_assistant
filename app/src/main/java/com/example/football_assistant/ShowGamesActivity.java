@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -45,8 +46,6 @@ public class ShowGamesActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Could not get Team name, please return to last screen and try again", Toast.LENGTH_SHORT).show();
         }
         displayGamesList(name);
-//        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, mobileArray);
-//        lvGames.setAdapter(adapter);
     }
 
 
@@ -74,7 +73,7 @@ public class ShowGamesActivity extends AppCompatActivity {
                         String scoreB = game.child("scoreB").getValue(String.class);
                         Game currGame = new Game(teamA, teamB, scoreA, scoreB, place, date);
                         games.add(currGame);
-                        Toast.makeText(getApplicationContext(),currGame.toString(),Toast.LENGTH_LONG).show();
+                        Log.d("GameAdd",currGame.toString());
                     }
                     show(games);
                 }
