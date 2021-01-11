@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +26,7 @@ public class ShowGamesActivity extends AppCompatActivity {
 
     private FirebaseDatabase rootNode;
     private DatabaseReference gameReference;
-    private DatabaseReference teamReference;
+    Button btnBack;
     private ListView lvGames;
     String name;
     String[] mobileArray = {"Android","IPhone","WindowsMobile","Blackberry",
@@ -36,7 +38,16 @@ public class ShowGamesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_games);
 
+        btnBack = (Button) findViewById(R.id.btnReturnFromGames);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                returnToMainMenu();
+            }
+        });
+
         lvGames = (ListView) findViewById(R.id.lvGames);
+
         Bundle extras = getIntent().getExtras();
         if(extras == null){
             Toast.makeText(getApplicationContext(), "Could not get Team name, please return to last screen and try again", Toast.LENGTH_SHORT).show();
@@ -48,6 +59,10 @@ public class ShowGamesActivity extends AppCompatActivity {
         displayGamesList(name);
     }
 
+    private void returnToMainMenu() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 
     private void displayGamesList(String name) {
         getGamesFromDB(name);
