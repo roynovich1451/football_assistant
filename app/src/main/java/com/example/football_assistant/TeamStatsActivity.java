@@ -8,8 +8,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.telecom.Call;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -19,6 +22,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 import javax.security.auth.callback.Callback;
 
 public class TeamStatsActivity extends AppCompatActivity {
@@ -26,20 +31,20 @@ public class TeamStatsActivity extends AppCompatActivity {
     private FirebaseDatabase rootNode;
     private DatabaseReference teamReference;
     private Button btnRemove, btnSearch, btnGames;
-    private EditText etTeam;
+    private Spinner spinner;
+    ArrayList<String> teamsList;
 
-    @Override
+        @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_stats);
 
-        etTeam = (EditText) findViewById(R.id.etTeamStat);
-
+        spinner = (Spinner) findViewById(R.id.spTeams);
+        createSpinner();
         btnRemove = (Button) findViewById(R.id.btnRemoveTeam);
         btnRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                removeTeamFromDB();
                 checkIfTeamExist("Remove");
             }
         });
@@ -48,11 +53,6 @@ public class TeamStatsActivity extends AppCompatActivity {
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (etTeam.getText().toString().matches("")) {
-                    Toast.makeText(getApplicationContext(), "Please enter wanted team", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-//                openTeamStatActivity(etTeam.getText().toString());
                 checkIfTeamExist("Stats");
             }
         });
@@ -61,14 +61,40 @@ public class TeamStatsActivity extends AppCompatActivity {
         btnGames.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (etTeam.getText().toString().matches("")) {
-                    Toast.makeText(getApplicationContext(), "Please enter wanted team", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-//                openShowGamesActivity(etTeam.getText().toString());
                 checkIfTeamExist("Games");
             }
         });
+    }
+    private void createSpinner() {
+        try{
+            ArrayList<String> teams_names = new ArrayList<String>();
+            rootNode = FirebaseDatabase.getInstance("https://football-assistant-1bc4c-default-rtdb.firebaseio.com/");
+            teamReference = rootNode.getReference("Teams");
+            teamReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot team : dataSnapshot.getChildren()) {
+                        teams_names.add(team.child("name").getValue(String.class));
+                    }
+                    showList(teams_names);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+        catch (Exception e){
+            Toast.makeText(getApplicationContext(), "Failure while try to load from DB:\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    private void showList(ArrayList<String> teams_names) {
+        ArrayAdapter adapter = new ArrayAdapter(this,R.layout.spinner_item,teams_names);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
     }
 
     private void openTeamStatActivity(String tName) {
@@ -83,38 +109,11 @@ public class TeamStatsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-//    private void removeTeamFromDB() {
-//        try {
-//            rootNode = FirebaseDatabase.getInstance("https://football-assistant-1bc4c-default-rtdb.firebaseio.com/");
-//            teamReference = rootNode.getReference("Teams");
-//            String name = etTeam.getText().toString();
-//            Query searchedTeam = teamReference.orderByChild("name").equalTo(name);
-//            searchedTeam.addListenerForSingleValueEvent(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                    if (dataSnapshot.exists()) {
-//                        teamReference.child(name).removeValue();
-//                        Toast.makeText(getApplicationContext(), "Team '" + name + "' has been deleted from DB", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(getApplicationContext(), "Team '" + name + "' could not be found in DB", Toast.LENGTH_SHORT).show();
-//                        return;
-//                    }
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError databaseError) {
-//                }
-//            });
-//        } catch (Exception e) {
-//            Toast.makeText(getApplicationContext(), "Failure while try to remove from DB:\n" + e.getMessage(), Toast.LENGTH_LONG).show();
-//        }
-//    }
-
     public void checkIfTeamExist(String type) {
         try {
             rootNode = FirebaseDatabase.getInstance("https://football-assistant-1bc4c-default-rtdb.firebaseio.com/");
             teamReference = rootNode.getReference("Teams");
-            String name = etTeam.getText().toString();
+            String name = spinner.getSelectedItem().toString();
             Query searchedTeam = teamReference.orderByChild("name").equalTo(name);
             searchedTeam.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override

@@ -123,7 +123,7 @@ public class NewGameActivity extends AppCompatActivity {
         }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "n")
                 .setContentTitle("Football assistant")
-                .setSmallIcon(R.drawable.icon_app)
+                .setSmallIcon(R.drawable.football_icon)
                 .setAutoCancel(true)
                 .setContentText("New game just added!");
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);

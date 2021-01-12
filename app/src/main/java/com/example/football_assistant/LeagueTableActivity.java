@@ -120,7 +120,6 @@ public class LeagueTableActivity extends AppCompatActivity {
         ArrayList<Team> teams = new ArrayList<Team>();
         rootNode = FirebaseDatabase.getInstance("https://football-assistant-1bc4c-default-rtdb.firebaseio.com/");
         teamReference = rootNode.getReference("Teams");
-//        Query searchedTeam = teamReference.orderByChild("points");
         teamReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
