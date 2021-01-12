@@ -3,10 +3,12 @@ package com.example.football_assistant;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -17,16 +19,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NewGameActivity extends AppCompatActivity {
     private Button btnAdd, btnBack;
-    private EditText etTeamA, etTeamB, etScoreA, etScoreB, etPlace, etDate;
+    private EditText etTeamA, etTeamB, etScoreA, etScoreB, etPlace;
+    private DatePicker dpDate;
     private FirebaseDatabase rootNode;
     private DatabaseReference gameReference;
     private DatabaseReference teamReference;
-    private int gameID;
-
+    private int gameID = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +61,7 @@ public class NewGameActivity extends AppCompatActivity {
         etScoreA = (EditText) findViewById(R.id.etScoreA);
         etScoreB = (EditText) findViewById(R.id.etScoreB);
         etPlace = (EditText) findViewById(R.id.etPlace);
-        etDate = (EditText) findViewById(R.id.etDate);
+        dpDate = (DatePicker) findViewById(R.id.dpDate);
 
         btnAdd = (Button) findViewById(R.id.btnAdd);
         btnBack = (Button) findViewById(R.id.btnBackFromNG);
@@ -80,6 +87,20 @@ public class NewGameActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"Please fill all data before ADD",Toast.LENGTH_SHORT).show();
             return false;
         }
+        if (!isDateValid())
+            return false;
+        return true;
+    }
+
+    private boolean isDateValid() {
+
+        Date currDate = new Date();
+        Date checked = new Date(dpDate.getYear()-1900, dpDate.getMonth(),dpDate.getDayOfMonth());
+        if (currDate.before(checked)){
+            Toast.makeText(getApplicationContext(),"Date is not valid, must be before "+
+                    new SimpleDateFormat("dd/mm/yyyy", Locale.getDefault()).format(new Date()),Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
 
@@ -97,9 +118,10 @@ public class NewGameActivity extends AppCompatActivity {
         updateTeam(nameB, getText(etScoreB), getText(etScoreA));
 
         try{
+            String date = String.format("%02d/%02d/%d", dpDate.getDayOfMonth(), dpDate.getMonth()+1, dpDate.getYear());
             Game game = new Game(getText(etTeamA), getText(etTeamB),
-                    getText(etScoreA), getText(etScoreB), getText(etPlace), getText(etDate));
-            gameReference.child(String.valueOf(gameID)).setValue(game);
+                    getText(etScoreA), getText(etScoreB), getText(etPlace), date);
+            gameReference.child(String.valueOf(gameID++)).setValue(game);
             Toast.makeText(getApplicationContext(),"Data saved",Toast.LENGTH_SHORT).show();
         }
         catch (Exception e){
@@ -159,13 +181,10 @@ public class NewGameActivity extends AppCompatActivity {
         teamA = isEmpty(etTeamA);
         teamB = isEmpty(etTeamB);
         place = isEmpty(etPlace);
-        date = isEmpty(etDate);
-        return !(scoreA || scoreB || teamA || teamB || place || date);
+        return !(scoreA || scoreB || teamA || teamB || place);
     }
 
     private String getText(EditText et){
         return et.getText().toString();
     }
-
-
 }

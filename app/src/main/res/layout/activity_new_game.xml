@@ -7,45 +7,68 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/tvHeader"
-        android:layout_width="wrap_content"
+
+        <EditText
+        android:id="@+id/etTeamA"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="HEADER"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.051" />
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:hint="Team A"
+        app:layout_constraintEnd_toStartOf="@+id/tvVS"
+        app:layout_constraintTop_toTopOf="parent"/>
+
 
     <EditText
         android:id="@+id/etTeamB"
-        android:layout_width="153dp"
-        android:layout_height="43dp"
-        android:ems="10"
-        android:inputType="textPersonName"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
         android:hint="Team B"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.926"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.145" />
+        app:layout_constraintStart_toEndOf="@+id/tvVS"
+        app:layout_constraintTop_toTopOf="@+id/etTeamA"/>
+
 
     <EditText
-        android:id="@+id/etTeamA"
-        android:layout_width="153dp"
-        android:layout_height="43dp"
-        android:ems="10"
-        android:hint="Team A"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/etScoreA"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:inputType="number"
+        android:hint="Score A"
+        app:layout_constraintEnd_toStartOf="@+id/tvPadScore"
+        app:layout_constraintTop_toBottomOf="@+id/etTeamA"/>
+
+    <EditText
+        android:id="@+id/etScoreB"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:inputType="number"
+        android:hint="Score B"
+        app:layout_constraintStart_toEndOf="@+id/tvPadScore"
+        app:layout_constraintTop_toTopOf="@+id/etScoreA"/>
+
+
+    <EditText
+        android:id="@+id/etPlace"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:hint="Location"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.073"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.145" />
+        app:layout_constraintTop_toBottomOf="@+id/etScoreA"/>
 
     <TextView
         android:id="@+id/tvPadScore"
@@ -53,125 +76,64 @@
         android:layout_height="46dp"
         android:text=" - "
         android:textSize="40sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.305" />
-
-    <EditText
-        android:id="@+id/etPlace"
-        android:layout_width="153dp"
-        android:layout_height="43dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="stadium/location"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.736"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.449" />
-
-    <EditText
-        android:id="@+id/etScoreB"
-        android:layout_width="74dp"
-        android:layout_height="49dp"
-        android:ems="10"
-        android:hint="Score B"
-        android:inputType="number"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.709"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.306" />
-
-    <TextView
-        android:id="@+id/tvPlace"
-        android:layout_width="54dp"
-        android:layout_height="22dp"
-        android:text="Place"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.207"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.448" />
-
-    <TextView
-        android:id="@+id/tvDate"
-        android:layout_width="54dp"
-        android:layout_height="22dp"
-        android:text="Date"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.207"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.533" />
-
-    <EditText
-        android:id="@+id/etScoreA"
-        android:layout_width="74dp"
-        android:layout_height="49dp"
-        android:ems="10"
-        android:hint="Score A"
-        android:inputType="number"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.29"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.306" />
+        app:layout_constraintTop_toTopOf="@+id/etScoreA" />
 
     <TextView
         android:id="@+id/tvVS"
         android:layout_width="40dp"
         android:layout_height="29dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
         android:text="VS"
         android:textAlignment="center"
-        android:gravity="center_horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.152" />
+        app:layout_constraintTop_toTopOf="@+id/etTeamA" />
 
     <Button
         android:id="@+id/btnAdd"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
         android:text="Add"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:fontFamily="@font/myfont"
+        app:backgroundTint="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/btnBackFromNG"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.79" />
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btnBackFromNG"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="50dp"
         android:text="Back to menu"
+        android:fontFamily="@font/myfont"
+        app:backgroundTint="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.903" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <EditText
-        android:id="@+id/etDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="date"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <DatePicker
+        android:id="@+id/dpDate"
+        android:layout_width="250dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="30dp"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.82"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.537" />
+        app:layout_constraintTop_toBottomOf="@+id/etPlace"></DatePicker>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
