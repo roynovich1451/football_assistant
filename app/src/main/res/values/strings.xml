@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">football_assistant</string>
+    <string name="app_name">Football Assistant</string>
     <string name="title_activity_new_game_acticity">NewGameActicity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>

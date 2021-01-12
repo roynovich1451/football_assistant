@@ -1,10 +1,17 @@
 package com.example.football_assistant;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.app.DatePickerDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +19,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,7 +49,6 @@ public class NewGameActivity extends AppCompatActivity {
 
         rootNode = FirebaseDatabase.getInstance("https://football-assistant-1bc4c-default-rtdb.firebaseio.com/");
         gameReference = rootNode.getReference("Games");
-        teamReference = rootNode.getReference("Teams");
         gameReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -55,6 +62,33 @@ public class NewGameActivity extends AppCompatActivity {
 
             }
         });
+        gameReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                notification();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        teamReference = rootNode.getReference("Teams");
 
         etTeamA = (EditText) findViewById(R.id.etTeamA);
         etTeamB = (EditText) findViewById(R.id.etTeamB);
@@ -79,6 +113,21 @@ public class NewGameActivity extends AppCompatActivity {
                 returnMainActivity();
             }
         });
+    }
+
+    private void notification(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel channel = new NotificationChannel("n", "n", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "n")
+                .setContentTitle("Football assistant")
+                .setSmallIcon(R.drawable.icon_app)
+                .setAutoCancel(true)
+                .setContentText("New game just added!");
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+        managerCompat.notify(999, builder.build());
     }
 
     private boolean ValidateUserInput() {
