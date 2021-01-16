@@ -64,32 +64,7 @@ public class NewGameActivity extends AppCompatActivity {
 
             }
         });
-        gameReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                notification();
-            }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
         teamReference = rootNode.getReference("Teams");
 
         etTeamA = (EditText) findViewById(R.id.etTeamA);
@@ -115,24 +90,14 @@ public class NewGameActivity extends AppCompatActivity {
         });
     }
 
-    private void notification(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationChannel channel = new NotificationChannel("n", "n", NotificationManager.IMPORTANCE_DEFAULT);
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
-        }
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "n")
-                .setContentTitle("Football assistant")
-                .setSmallIcon(R.drawable.football_icon)
-                .setAutoCancel(true)
-                .setContentText("New game just added!");
-        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-        managerCompat.notify(999, builder.build());
-    }
 
     private void ValidateUserInput() {
         if (!isAllDataFilled()){
             Toast.makeText(getApplicationContext(),"Please fill all data before ADD",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (sameTeams()){
+            Toast.makeText(getApplicationContext(),"Teams names must be different",Toast.LENGTH_SHORT).show();
             return;
         }
         if (!isDateValid())
@@ -148,6 +113,10 @@ public class NewGameActivity extends AppCompatActivity {
                     }})
                 .setNegativeButton(android.R.string.no, null).show();
         return;
+    }
+
+    private boolean sameTeams() {
+        return getText(etTeamA).equals(getText(etTeamB));
     }
 
     private void cleanInputs() {
