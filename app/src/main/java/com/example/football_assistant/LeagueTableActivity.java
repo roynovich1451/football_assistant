@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.internal.InternalTokenProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,7 +55,6 @@ public class LeagueTableActivity extends AppCompatActivity {
             row = new TableRow(this);
             lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
             row.setLayoutParams(lp);
-
             name = teams.get(i).getName();
             points = teams.get(i).getPoints();
             wins = teams.get(i).getWins();

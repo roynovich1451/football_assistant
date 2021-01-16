@@ -3,6 +3,8 @@ package com.example.football_assistant;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -32,7 +35,6 @@ public class TeamStatsActivity extends AppCompatActivity {
     private DatabaseReference teamReference;
     private Button btnRemove, btnSearch, btnGames;
     private Spinner spinner;
-    ArrayList<String> teamsList;
 
         @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +47,16 @@ public class TeamStatsActivity extends AppCompatActivity {
         btnRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkIfTeamExist("Remove");
+                new AlertDialog.Builder(TeamStatsActivity.this)
+                        .setTitle("Remove Game")
+                        .setMessage("Do you really want to Remove Team '"+spinner.getSelectedItem().toString()+"' From DB?\nTHIS ACTION CAN NOT UNDO")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                checkIfTeamExist("Remove");
+//                                createSpinner();
+                            }})
+                        .setNegativeButton(android.R.string.no, null).show();
             }
         });
 
@@ -73,6 +84,7 @@ public class TeamStatsActivity extends AppCompatActivity {
             teamReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    teams_names.clear();
                     for (DataSnapshot team : dataSnapshot.getChildren()) {
                         teams_names.add(team.child("name").getValue(String.class));
                     }
@@ -94,6 +106,7 @@ public class TeamStatsActivity extends AppCompatActivity {
     private void showList(ArrayList<String> teams_names) {
         ArrayAdapter adapter = new ArrayAdapter(this,R.layout.spinner_item,teams_names);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(null);
         spinner.setAdapter(adapter);
     }
 

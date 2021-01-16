@@ -6,10 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -102,9 +104,7 @@ public class NewGameActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ValidateUserInput()){
-                    StoreToMD();
-                }
+                ValidateUserInput();
             }
         });
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -130,24 +130,42 @@ public class NewGameActivity extends AppCompatActivity {
         managerCompat.notify(999, builder.build());
     }
 
-    private boolean ValidateUserInput() {
-        //TODO: input check for dates, places and teams.
+    private void ValidateUserInput() {
         if (!isAllDataFilled()){
             Toast.makeText(getApplicationContext(),"Please fill all data before ADD",Toast.LENGTH_SHORT).show();
-            return false;
+            return;
         }
         if (!isDateValid())
-            return false;
-        return true;
+            return;
+        new AlertDialog.Builder(this)
+                .setTitle("Add Game")
+                .setMessage("Do you really want to save game into DB?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        StoreToMD();
+                        cleanInputs();
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+        return;
+    }
+
+    private void cleanInputs() {
+        etPlace.setText("");
+        etTeamA.setText("");
+        etScoreA.setText("");
+        etScoreB.setText("");
+        etTeamB.setText("");
     }
 
     private boolean isDateValid() {
 
         Date currDate = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
+        String strDate = formatter.format(currDate);
         Date checked = new Date(dpDate.getYear()-1900, dpDate.getMonth(),dpDate.getDayOfMonth());
         if (currDate.before(checked)){
-            Toast.makeText(getApplicationContext(),"Date is not valid, must be before "+
-                    new SimpleDateFormat("dd/mm/yyyy", Locale.getDefault()).format(new Date()),Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Date is not valid, can't be later then today: " + strDate,Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -171,10 +189,10 @@ public class NewGameActivity extends AppCompatActivity {
             Game game = new Game(getText(etTeamA), getText(etTeamB),
                     getText(etScoreA), getText(etScoreB), getText(etPlace), date);
             gameReference.child(String.valueOf(gameID++)).setValue(game);
-            Toast.makeText(getApplicationContext(),"Data saved",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"New game saved",Toast.LENGTH_SHORT).show();
         }
         catch (Exception e){
-            Toast.makeText(getApplicationContext(),"Failure accured while try to save in DB:\n" + e.getMessage(),Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"Failure while try to save in DB:\n" + e.getMessage(),Toast.LENGTH_LONG).show();
         }
     }
 
@@ -196,14 +214,12 @@ public class NewGameActivity extends AppCompatActivity {
                         Team updated = new Team(name, wins, draws, losses, cGF, cGA, points);
                         updated.updateAfterGame(GF, GA);
                         teamReference.child(name).setValue(updated);
-                        Toast.makeText(getApplicationContext(),"Team "+ name + " updated",Toast.LENGTH_SHORT).show();
                     }
                     else {
                         Team newTeam = new Team();
                         newTeam.setName(name);
                         newTeam.updateAfterGame(GF, GA);
                         teamReference.child(name).setValue(newTeam);
-                        Toast.makeText(getApplicationContext(),"Team "+ name + " created",Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -234,6 +250,6 @@ public class NewGameActivity extends AppCompatActivity {
     }
 
     private String getText(EditText et){
-        return et.getText().toString();
+        return et.getText().toString().toLowerCase().trim();
     }
 }
