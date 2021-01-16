@@ -34,6 +34,7 @@ public class LeagueTableActivity extends AppCompatActivity {
     private ArrayList<Team> teams;
     private FirebaseDatabase rootNode;
     private DatabaseReference teamReference;
+    public static final double BREAK_LINE = 7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +53,12 @@ public class LeagueTableActivity extends AppCompatActivity {
         TableRow row;
         TableRow.LayoutParams lp;
         for (int i = 0; i < rowNum; i++) {
-            row = new TableRow(this);
+            row = createRow(i+1);
             lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
             row.setLayoutParams(lp);
             name = teams.get(i).getName();
-            points = teams.get(i).getPoints();
+            int padRow = (int)Math.ceil(name.length()/BREAK_LINE);
+            points = padString(teams.get(i).getPoints(), padRow);
             wins = teams.get(i).getWins();
             draws = teams.get(i).getDraws();
             losses = teams.get(i).getLosses();
@@ -66,14 +68,14 @@ public class LeagueTableActivity extends AppCompatActivity {
             diff = String.valueOf(Integer.parseInt(gf) - Integer.parseInt(ga));
             oag = String.valueOf(Integer.parseInt(wins) + Integer.parseInt(draws) + Integer.parseInt(losses));
 
-            tvName = setView(name, i+1);
-            tvPoints = setView(points, i+1);
-            tvWins = setView(wins, i+1);
-            tvDraws = setView(draws, i+1);
-            tbLosses = setView(losses, i+1);
-            tvGFGA = setView(gfga, i+1);
-            tvDiff = setView(diff, i+1);
-            tvGames = setView(oag, i+1);
+            tvName = setView(name);
+            tvPoints = setView(points);
+            tvWins = setView(wins);
+            tvDraws = setView(draws);
+            tbLosses = setView(losses);
+            tvGFGA = setView(gfga);
+            tvDiff = setView(diff);
+            tvGames = setView(oag);
 
             row.addView(tvName);
             row.addView(tvGames);
@@ -86,25 +88,39 @@ public class LeagueTableActivity extends AppCompatActivity {
             tb.addView(row, i);
         }
         //create title row
-        row = new TableRow(this);
+        row = createRow(0);
         lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
         row.setLayoutParams(lp);
-        row.addView(setView("Name",0));
-        row.addView(setView("Games",0));
-        row.addView(setView("Wins",0));
-        row.addView(setView("Draws",0));
-        row.addView(setView("Losses",0));
-        row.addView(setView("GF:GA",0));
-        row.addView(setView("Diff",0));
-        row.addView(setView("Points",0));
+        row.addView(setView("Name"));
+        row.addView(setView("Games"));
+        row.addView(setView("Wins"));
+        row.addView(setView("Draws"));
+        row.addView(setView("Losses"));
+        row.addView(setView("GF:GA"));
+        row.addView(setView("Diff"));
+        row.addView(setView("Points"));
         tb.addView(row, 0);
     }
 
-    private TextView setView(String text, int index){
+    private String padString(String s, int p) {
+        StringBuilder sb = new StringBuilder(s);
+        for (int i = 1; i < p; i++){
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
+    private TextView setView(String text){
         TextView tv = new TextView(this);
         tv.setText(text);
         tv.setGravity(Gravity.CENTER);
         tv.setWidth(this.getWindow().getDecorView().getWidth()/8);
+        
+        return tv;
+    }
+    
+    private TableRow createRow(int index){
+        TableRow row = new TableRow(this);
         String backColor;
         if (index == 0) //Title
             backColor = "#00897B";
@@ -112,9 +128,10 @@ public class LeagueTableActivity extends AppCompatActivity {
             backColor = "#9E9E9E";
         else
             backColor = "#E0E0E0";
-        tv.setBackgroundColor(Color.parseColor(backColor));
-        return tv;
+        row.setBackgroundColor(Color.parseColor(backColor));
+        return row;
     }
+    
     private void getTeamsFromDB() {
         //TODO: implement getTeamsFromDB();
         ArrayList<Team> teams = new ArrayList<Team>();

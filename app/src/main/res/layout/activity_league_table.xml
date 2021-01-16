@@ -9,12 +9,14 @@
     <TableLayout
         android:id="@+id/displayLinear"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:measureWithLargestChild="true">
 
         <TableRow
             android:id="@+id/tableRowTitles"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:measureWithLargestChild="true">
         </TableRow>
     </TableLayout>
 </LinearLayout>
