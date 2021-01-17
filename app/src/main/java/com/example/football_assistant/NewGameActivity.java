@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -44,6 +45,8 @@ public class NewGameActivity extends AppCompatActivity {
     private DatabaseReference gameReference;
     private DatabaseReference teamReference;
     private int gameID = 0;
+    public static final int START_YEAR = 1900;
+    public static final int VALID_YEAR = 1950;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,19 +95,21 @@ public class NewGameActivity extends AppCompatActivity {
 
 
     private void ValidateUserInput() {
-        if (!isAllDataFilled()){
-            Toast.makeText(getApplicationContext(),"Please fill all data before ADD",Toast.LENGTH_SHORT).show();
+        if (!isAllDataFilled()) {
+            Toast.makeText(getApplicationContext(), "Please fill all data before ADD", Toast.LENGTH_SHORT).show();
             return;
         }
         if (sameTeams()){
             Toast.makeText(getApplicationContext(),"Teams names must be different",Toast.LENGTH_SHORT).show();
             return;
         }
+        if (!checkNamesAndPlace())
+            return;
         if (!isDateValid())
             return;
         new AlertDialog.Builder(this)
                 .setTitle("Add Game")
-                .setMessage("Do you really want to save game into DB?")
+                .setMessage("Are you sure you want to add this game?")
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -113,6 +118,46 @@ public class NewGameActivity extends AppCompatActivity {
                     }})
                 .setNegativeButton(android.R.string.no, null).show();
         return;
+    }
+
+    private boolean checkNamesAndPlace() {
+//        Pattern ptr_name = Pattern.compile("[a-zA-Z][a-zA-Z0-9]*",Pattern.CASE_INSENSITIVE);
+//        Pattern ptr_place = Pattern.compile("[a-zA-Z]+",Pattern.CASE_INSENSITIVE);
+//        Matcher match_nameA = ptr_name.matcher(getText(etTeamA));
+//        Matcher match_nameB = ptr_name.matcher(getText(etTeamB));
+//        Matcher match_place = ptr_place.matcher(getText(etPlace));
+//        boolean b_nameA = match_nameA.find();
+//        boolean b_nameB = match_nameB.find();
+//        boolean b_place = match_place.find();
+//        if (!b_nameA || !b_nameB){
+//            Toast.makeText(getApplicationContext(),"Teams name must start with letter and contain only chars and numbers",Toast.LENGTH_SHORT).show();
+//            return false;
+//        }
+//        if (!b_place){
+//            Toast.makeText(getApplicationContext(),"Place name can contain only chars",Toast.LENGTH_SHORT).show();
+//            return false;
+//        }
+        if (!IterateString(getText(etTeamA), "Team A: ") ||
+            !IterateString(getText(etTeamB), "Team B: ") ||
+            !IterateString(getText(etPlace), "Place: ")){
+            return false;
+        }
+        return true;
+    }
+
+    private boolean IterateString(String s, String prefix){
+        for (int i = 0; i < s.length(); i++){
+            char c = s.charAt(i);
+            if (i == 0 && !Character.isLetter(c)){
+                Toast.makeText(getApplicationContext(),prefix+"'"+s+"' must start with letter",Toast.LENGTH_LONG).show();
+                return false;
+            }
+            else if (!Character.isLetter(c) && !Character.isDigit(c) && !(c == ' ')){
+                Toast.makeText(getApplicationContext(),prefix+"'"+s+"' must contain only letters, numbers and spaces",Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean sameTeams() {
@@ -132,10 +177,15 @@ public class NewGameActivity extends AppCompatActivity {
         Date currDate = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
         String strDate = formatter.format(currDate);
-        Date checked = new Date(dpDate.getYear()-1900, dpDate.getMonth(),dpDate.getDayOfMonth());
-        if (currDate.before(checked)){
-            Toast.makeText(getApplicationContext(),"Date is not valid, can't be later then today: " + strDate,Toast.LENGTH_SHORT).show();
+        Date checked = new Date(dpDate.getYear() - START_YEAR, dpDate.getMonth(),dpDate.getDayOfMonth());
+        if (checked.getYear() + START_YEAR < VALID_YEAR){
+            Toast.makeText(getApplicationContext(),"Valid year start in 1950",Toast.LENGTH_SHORT).show();
             return false;
+        }
+        if (currDate.before(checked)){
+            Toast.makeText(getApplicationContext(),"Date is not valid, can't be later then today: " + strDate,Toast.LENGTH_LONG).show();
+            return false;
+
         }
         return true;
     }

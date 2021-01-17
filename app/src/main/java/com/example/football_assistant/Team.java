@@ -124,6 +124,20 @@ public class Team implements Comparable{
 
     @Override
     public int compareTo(Object o) {
-        return -1 * (Integer.parseInt(this.points) - Integer.parseInt(((Team)o).getPoints()));
+        if (Integer.parseInt(this.points) - Integer.parseInt(((Team)o).getPoints()) == 0){
+            int this_GD = Integer.parseInt(this.getGF()) - Integer.parseInt(this.getGA());
+            int other_GD = Integer.parseInt(((Team)o).getGF()) - Integer.parseInt(((Team)o).getGA());
+            if (this_GD - other_GD == 0){
+                int this_GF = Integer.parseInt(this.getGF());
+                int other_GF = Integer.parseInt(((Team)o).getGF());
+                return -1 * (this_GF - other_GF);
+            }
+            else{
+                return -1 * (this_GD - other_GD);
+            }
+        }
+        else {
+            return -1 * (Integer.parseInt(this.points) - Integer.parseInt(((Team) o).getPoints()));
+        }
     }
 }
